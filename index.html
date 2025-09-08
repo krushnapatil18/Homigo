@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Editor</title>
+    <meta name="theme-color" content="#CD5C08">
+    <title>Homigo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #FFF5E4;
         }
 
         .loading-container {
@@ -21,67 +22,129 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 245, 228, 0.85);
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(2px);
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
+            border: 4px solid rgba(0,0,0,0.06);
+            border-top: 4px solid #CD5C08;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="min-h-screen bg-[#FFF5E4] text-[#1f2937]">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">AI Image Editor</h1>
-        <p class="text-center text-gray-500 mb-8">Upload an image and tell me how to customize it!</p>
+    <!-- Navigation -->
+    <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/50 bg-white/70 border-b border-black/5">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-xl bg-[#CD5C08] text-white flex items-center justify-center font-bold">H</div>
+                <span class="text-xl font-semibold tracking-tight">Homigo</span>
+            </div>
+            <nav class="hidden md:flex items-center gap-6 text-sm text-gray-600">
+                <a class="hover:text-[#CD5C08] transition-colors" href="#features">Features</a>
+                <a class="hover:text-[#CD5C08] transition-colors" href="#editor">Editor</a>
+                <a class="hover:text-[#CD5C08] transition-colors" href="#preview">Preview</a>
+            </nav>
+            <a href="#editor" class="px-4 py-2 rounded-full bg-[#CD5C08] text-white text-sm font-medium shadow-sm hover:shadow-md transition-shadow">Get Started</a>
+        </div>
+    </header>
 
-        <div class="space-y-6">
-            <!-- Image Upload Section -->
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 -z-10">
+            <div class="absolute -top-24 -left-10 h-72 w-72 rounded-full bg-[#C1D8C3] blur-3xl opacity-70"></div>
+            <div class="absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-[#6A9C89] blur-3xl opacity-50"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
             <div>
-                <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
-                <input type="file" id="imageUpload" accept="image/*" class="w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-[#1f2937]">Create smart visuals with <span class="text-[#CD5C08]">Homigo</span></h1>
+                <p class="mt-4 text-gray-600 text-lg">A modern AI-powered image editor. Upload an image, describe your changes, and generate stunning results in seconds.</p>
+                <div class="mt-6 flex items-center gap-3">
+                    <a href="#editor" class="px-5 py-3 rounded-full bg-[#CD5C08] text-white font-semibold shadow hover:shadow-md transition-all">Start editing</a>
+                    <a href="#features" class="px-5 py-3 rounded-full border border-[#6A9C89]/40 text-[#6A9C89] font-semibold bg-white/60 hover:bg-white transition-colors">Learn more</a>
+                </div>
+                <div id="features" class="mt-8 grid grid-cols-2 gap-4 text-sm text-gray-700">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-[#6A9C89]"></span>
+                        Quick generation
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-[#CD5C08]"></span>
+                        Easy prompts
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-[#C1D8C3]"></span>
+                        Clean preview
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-[#1f2937]"></span>
+                        No installs
+                    </div>
+                </div>
             </div>
 
-            <!-- Text Prompt Section -->
-            <div>
-                <label for="promptInput" class="block text-sm font-medium text-gray-700 mb-2">Enter your prompt</label>
-                <textarea id="promptInput" rows="4" placeholder="e.g., Change the wall color to a light blue, add a plant in the corner." class="block p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"></textarea>
-            </div>
+            <!-- Editor Card -->
+            <div id="editor" class="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-8 border border-black/5">
+                <h2 class="text-2xl font-bold text-[#1f2937]">Bring Imagination to Life</h2>
+                <p class="text-gray-500 mt-1">Upload an image and describe your changes.</p>
 
-            <!-- Action Button -->
-            <div class="flex justify-center">
-                <button id="generateBtn" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed">
-                    Generate
-                </button>
-            </div>
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+                        <input type="file" id="imageUpload" accept="image/*" class="w-full text-gray-900 border border-gray-200 rounded-xl cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#C1D8C3] file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#FFF5E4] file:text-[#CD5C08] hover:file:bg-[#FFF5E4]/80">
+                    </div>
 
-            <!-- Image Preview Section -->
-            <div id="imagePreview" class="flex flex-col items-center">
-                <h3 class="text-lg font-medium text-gray-700 mt-4 mb-2 hidden" id="previewTitle">Generated Image</h3>
-                <img id="generatedImage" class="rounded-lg shadow-md max-w-full h-auto hidden" alt="Generated image">
-                <div id="statusMessage" class="mt-4 text-center text-gray-500 hidden"></div>
+                    <div>
+                        <label for="promptInput" class="block text-sm font-medium text-gray-700 mb-2">Describe your edit</label>
+                        <textarea id="promptInput" rows="4" placeholder="e.g., Change the wall color to a light blue, add a plant in the corner." class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#C1D8C3] focus:border-transparent transition"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button id="generateBtn" class="px-6 py-3 bg-[#CD5C08] text-white font-semibold rounded-full shadow-md hover:bg-[#b94e06] focus:outline-none focus:ring-4 focus:ring-[#CD5C08]/30 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed">
+                            Generate
+                        </button>
+                       
+                    </div>
+
+                    <div id="imagePreview" class="flex flex-col items-center">
+                        <h3 class="text-lg font-semibold text-[#1f2937] mt-2 mb-2 hidden" id="previewTitle">Generated Image</h3>
+                        <img id="generatedImage" class="rounded-xl shadow-lg max-w-full h-auto hidden ring-1 ring-black/5" alt="Generated image">
+                        <div id="statusMessage" class="mt-3 text-center text-gray-500 hidden"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-black/5 bg-white/70">
+        <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-600 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-[#6A9C89]"></span>
+                Built with love for creators
+            </div>
+            <div class="mt-3 md:mt-0 flex items-center gap-4">
+                <div>© <span id="year"></span> Homigo</div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-white/70 border border-[#C1D8C3] px-3 py-1 text-xs text-[#CD5C08]">
+                    Powered by <span class="font-semibold text-[#6A9C89]">MrOrganic</span>
+                </span>
+            </div>
+        </div>
+    </footer>
 
     <!-- Loading Spinner -->
     <div id="loadingOverlay" class="loading-container">
@@ -98,11 +161,14 @@
             const statusMessage = document.getElementById('statusMessage');
             const previewTitle = document.getElementById('previewTitle');
 
+            // Footer year
+            const yearEl = document.getElementById('year');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+
             generateBtn.disabled = true;
 
             let uploadedImageBase64 = null;
 
-            // Enable/disable the button based on user input
             function checkInputs() {
                 generateBtn.disabled = !imageUpload.files[0] || promptInput.value.trim() === '';
             }
@@ -130,7 +196,6 @@
                 const userPrompt = promptInput.value.trim();
                 const mimeType = imageUpload.files[0].type;
 
-                // Show loading state and hide previous results
                 loadingOverlay.style.display = 'flex';
                 generatedImage.classList.add('hidden');
                 previewTitle.classList.add('hidden');
@@ -142,31 +207,20 @@
 
                     const payload = {
                         contents: [{
-                            parts: [{
-                                text: userPrompt
-                            }, {
-                                inlineData: {
-                                    mimeType: mimeType,
-                                    data: uploadedImageBase64
-                                }
-                            }]
+                            parts: [{ text: userPrompt }, { inlineData: { mimeType: mimeType, data: uploadedImageBase64 } }]
                         }],
-                        generationConfig: {
-                            responseModalities: ['TEXT', 'IMAGE']
-                        }
+                        generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
                     };
 
                     const response = await fetch(apiUrl, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
 
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(errorData.error.message || `API error: ${response.status}`);
+                        throw new Error(errorData.error?.message || `API error: ${response.status}`);
                     }
 
                     const result = await response.json();
@@ -179,12 +233,12 @@
                         previewTitle.classList.remove('hidden');
                         statusMessage.classList.add('hidden');
                     } else {
-                        statusMessage.textContent = "No image was generated. The model may have returned text-only output. Please try a different prompt.";
+                        statusMessage.textContent = "No image was generated. The model may have returned text-only output. Try a different prompt.";
                         statusMessage.classList.remove('hidden');
                     }
 
                 } catch (error) {
-                    console.error("Error generating image:", error);
+                    console.error('Error generating image:', error);
                     statusMessage.textContent = `An error occurred: ${error.message}`;
                     statusMessage.classList.remove('hidden');
                 } finally {
