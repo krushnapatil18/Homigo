@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .loading-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">AI Image Editor</h1>
+        <p class="text-center text-gray-500 mb-8">Upload an image and tell me how to customize it!</p>
+
+        <div class="space-y-6">
+            <!-- Image Upload Section -->
+            <div>
+                <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+                <input type="file" id="imageUpload" accept="image/*" class="w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+            </div>
+
+            <!-- Text Prompt Section -->
+            <div>
+                <label for="promptInput" class="block text-sm font-medium text-gray-700 mb-2">Enter your prompt</label>
+                <textarea id="promptInput" rows="4" placeholder="e.g., Change the wall color to a light blue, add a plant in the corner." class="block p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"></textarea>
+            </div>
+
+            <!-- Action Button -->
+            <div class="flex justify-center">
+                <button id="generateBtn" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed">
+                    Generate
+                </button>
+            </div>
+
+            <!-- Image Preview Section -->
+            <div id="imagePreview" class="flex flex-col items-center">
+                <h3 class="text-lg font-medium text-gray-700 mt-4 mb-2 hidden" id="previewTitle">Generated Image</h3>
+                <img id="generatedImage" class="rounded-lg shadow-md max-w-full h-auto hidden" alt="Generated image">
+                <div id="statusMessage" class="mt-4 text-center text-gray-500 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingOverlay" class="loading-container">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageUpload = document.getElementById('imageUpload');
+            const promptInput = document.getElementById('promptInput');
+            const generateBtn = document.getElementById('generateBtn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const generatedImage = document.getElementById('generatedImage');
+            const statusMessage = document.getElementById('statusMessage');
+            const previewTitle = document.getElementById('previewTitle');
+
+            generateBtn.disabled = true;
+
+            let uploadedImageBase64 = null;
+
+            // Enable/disable the button based on user input
+            function checkInputs() {
+                generateBtn.disabled = !imageUpload.files[0] || promptInput.value.trim() === '';
+            }
+
+            imageUpload.addEventListener('change', () => {
+                const file = imageUpload.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        uploadedImageBase64 = e.target.result.split(',')[1];
+                        checkInputs();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    uploadedImageBase64 = null;
+                    checkInputs();
+                }
+            });
+
+            promptInput.addEventListener('input', checkInputs);
+
+            generateBtn.addEventListener('click', async () => {
+                if (generateBtn.disabled) return;
+
+                const userPrompt = promptInput.value.trim();
+                const mimeType = imageUpload.files[0].type;
+
+                // Show loading state and hide previous results
+                loadingOverlay.style.display = 'flex';
+                generatedImage.classList.add('hidden');
+                previewTitle.classList.add('hidden');
+                statusMessage.classList.add('hidden');
+
+                try {
+                    const apiKey = "AIzaSyBs-hr-q5H3wyPoyUwCPj0KNwwYUgTzRaI";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+
+                    const payload = {
+                        contents: [{
+                            parts: [{
+                                text: userPrompt
+                            }, {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: uploadedImageBase64
+                                }
+                            }]
+                        }],
+                        generationConfig: {
+                            responseModalities: ['TEXT', 'IMAGE']
+                        }
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error.message || `API error: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                    if (base64Data) {
+                        const imageUrl = `data:image/png;base64,${base64Data}`;
+                        generatedImage.src = imageUrl;
+                        generatedImage.classList.remove('hidden');
+                        previewTitle.classList.remove('hidden');
+                        statusMessage.classList.add('hidden');
+                    } else {
+                        statusMessage.textContent = "No image was generated. The model may have returned text-only output. Please try a different prompt.";
+                        statusMessage.classList.remove('hidden');
+                    }
+
+                } catch (error) {
+                    console.error("Error generating image:", error);
+                    statusMessage.textContent = `An error occurred: ${error.message}`;
+                    statusMessage.classList.remove('hidden');
+                } finally {
+                    loadingOverlay.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
